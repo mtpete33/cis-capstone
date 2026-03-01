@@ -41,5 +41,11 @@ if ($path === '/login' || $path === '/login.php') {
   exit;
 }
 
+// New work order page
+if ($path === '/workorders/new') {
+  require __DIR__ . '/public/workorders_new.php';
+  exit;
+}
+
     // Default route -> dashboard
     require __DIR__ . '/public/index.php';

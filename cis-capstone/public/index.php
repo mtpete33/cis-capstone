@@ -31,6 +31,9 @@ $user = currentUser();
       <li>Total work orders: <span id="totalWO">-</span></li>
       <li>Open work orders: <span id="openWO">-</span></li>
     </ul>
+    
+    <h2>Create New Work Order</h2>
+    <p><a href="/workorders/new">+ Create New Work Order</a></p>
 
     <h2>Recent Work Orders</h2>
     <p id="woStatus">Loading work orders...</p>

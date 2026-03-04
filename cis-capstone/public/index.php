@@ -26,7 +26,7 @@ $user = currentUser();
   <hr>
 
   <div id="dashboard">
-    <p id="status">Loading dashboard...</p>
+    <!-- <p id="status">Loading dashboard...</p> -->
     <ul>
       <li>Total work orders: <span id="totalWO">-</span></li>
       <li>Open work orders: <span id="openWO">-</span></li>

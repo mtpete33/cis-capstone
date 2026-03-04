@@ -29,3 +29,16 @@ Feb 23rd 2026
 
 Next steps: Build out dashboard and UI, form/form validation, begin to work with CRUD operations and role-based permissions
 
+3/1/2026
+- Implemented dashboard "who am i" session check using /api/auth/check.php
+- Built the initial dashboard summary API endpoint dashboard/summary.php
+- Resolved some routing issues in router.php
+- built the Create Work Order UI and API endpoint and validated form submission
+- Successfully inserted new work order entry into the database tied to the logged in userID
+
+Challenges: difficulties pushing to GitHub through Replit. Trying to use remote SSH or personal access tokens from Github doesn't seem to work, so I am having to ask the Replit Agent to push to GitHub for me.
+
+Next steps: work on role-based behavior, improve UI, search/filtering existing work orders, work on editing/updating status changes to work orders
+
+3/4/2026
+- 

@@ -17,6 +17,10 @@ if (!isset($_SESSION['user'])) {
 try {
   $pdo = getPDO();
 
+  $user = $_SESSION['user'];
+  $roleID = (int)($user['roleID'] ?? 0);
+  $userID = (int)($user['userID'] ?? 0);
+
   $sql = '
     SELECT
       wo."workOrderID",
@@ -29,11 +33,33 @@ try {
     JOIN locations  l ON l."locationID" = wo."locationID"
     JOIN statuses   s ON s."statusID" = wo."currentStatusID"
     JOIN priorities p ON p."priorityID" = wo."priorityID"
-    ORDER BY wo."createdAt" DESC
-    LIMIT 100
   ';
 
-  $rows = $pdo->query($sql)->fetchAll();
+  $where = '';
+  $params = [];
+
+  if ($roleID === 1) {
+    // Admin no filter
+    $where = '';
+  } elseif ($roleID === 2) {
+    // Technician can see assigned to them or unassigned
+    $where = ' WHERE (wo."assignedToUserID" = :userID OR wo."assignedToUserID" IS NULL)';
+    $params[':userID'] = $userID;
+  } elseif ($roleID === 3) {
+    // Submitter can see only those they submitted
+    $where = ' WHERE wo."submittedByUserID" = :userID';
+    $params[':userID'] = $userID;
+  } else {
+    http_response_code(403);
+    echo json_encode(['ok' => false, 'error' => 'Forbidden']);
+    exit;
+  }
+
+  $sql .= $where . ' ORDER BY wo."createdAt" DESC LIMIT 100';
+
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute($params);
+  $rows = $stmt->fetchAll();
 
   echo json_encode(['ok' => true, 'items' => $rows]);
 } catch (Throwable $e) {

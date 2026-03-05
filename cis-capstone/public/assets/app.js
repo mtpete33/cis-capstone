@@ -9,6 +9,20 @@ $(document).ready(function () {
       .replaceAll("'", '&#039;');
   }
 
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+
+    const d = new Date(dateStr);
+
+    return d.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
+  }
+
   function loadWorkOrders() {
     $.getJSON('/api/work_orders/list.php')
       .done(function (d) {
@@ -33,7 +47,7 @@ $(document).ready(function () {
               <td>${escapeHtml(wo.statusName)}</td>
               <td>${escapeHtml(wo.priorityName)}</td>
               <td>${escapeHtml(wo.locationName)}</td>
-              <td>${escapeHtml(wo.createdAt)}</td>
+              <td>${escapeHtml(formatDate(wo.createdAt))}</td>
             </tr>
           `;
         }).join('');

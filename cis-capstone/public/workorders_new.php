@@ -23,6 +23,14 @@ $user = currentUser();
 
       <form id="createWorkOrderForm">
         <label>
+          Department<br>
+          <select id="departmentID" name="departmentID" required>
+            <option value="">Loading departments...</option>
+          </select>
+        </label>
+        <br><br>
+        
+        <label>
           Title<br>
           <input type="text" name="title" required>
         </label>
@@ -36,9 +44,8 @@ $user = currentUser();
 
       <label>
         Location<br>
-        <select id="locationID" name="locationID">
-          <option value="1">Central High School</option>
-          <option value="2">Lincoln Elementary</option>
+        <select id="locationID" name="locationID" required>
+          <option value="">Loading locations...</option>
         </select>
       </label>
        <br><br>
@@ -61,6 +68,15 @@ $user = currentUser();
 
       <script>
       $(document).ready(function () {
+        (async function init(){
+          try {
+            await Promise.all([loadDepartments(), loadLocations()]);
+          } catch (e) {
+            $('#formStatus').text('Failed to load form data.');
+            console.error(e);
+          }
+        })();
+        
         $('#createWorkOrderForm').on('submit', async function (e) {
           e.preventDefault();
 
@@ -71,6 +87,7 @@ $user = currentUser();
             description: $('textarea[name="description"]').val().trim(),
             locationID: parseInt($('#locationID').val(), 10),
             priorityID: parseInt($('#priorityID').val(), 10),
+            departmentID: parseInt($('#departmentID').val(), 10) || null,
           };
 
           try {
@@ -94,6 +111,41 @@ $user = currentUser();
             $('#formStatus').text('Network error');
           }
         });
+
+        // escapeHtml
+        function escapeHtml(str) {
+          return String(str ?? '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;');
+        
+        }
+
+        //Populate select
+        function populateSelect($select, items, valueKey, textKey, placeholder) {
+          const opts = [`<option value="">${placeholder}</option>`];
+          items.forEach((item) => {
+            opts.push(`<option value="${escapeHtml(item[valueKey])}">${escapeHtml(item[textKey])}</option>`);
+          });
+          $select.html(opts.join(''));
+        }
+
+        //Populate departments
+        async function loadDepartments() {
+          const res = await fetch('/api/meta/departments.php', {credentials: 'include'});
+           const data = await res.json();
+           if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to load departments');
+           populateSelect($('#departmentID'), data.items, 'departmentID', 'departmentName', '--Select department--');
+        }
+        //Populate locations
+        async function loadLocations() {
+           const res = await fetch('/api/meta/locations.php', {credentials: 'include'});
+           const data = await res.json();
+           if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to load locations');
+           populateSelect($('#locationID'), data.items, 'locationID', 'locationName', '--Select location--');
+        }
       });
       </script>
 

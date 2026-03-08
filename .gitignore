@@ -6,3 +6,10 @@
 .env
 
 .DS_Store
+
+.local/
+attached_assets/
+
+.env*
+
+Thumbs.db
